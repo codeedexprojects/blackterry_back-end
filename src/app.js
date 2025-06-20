@@ -12,10 +12,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const userRoutes = require('./features/user/userRoute')
+const productRoutes = require('./features/product/productRoute')
 
 // Routes 
-app.use('/user', userRoutes)
-
+app.use('/user-auth', userRoutes)
+app.use('/products', productRoutes)
 // Error handling middleware
 app.use(errorMiddleware);
 
