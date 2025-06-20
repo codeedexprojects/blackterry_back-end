@@ -12,9 +12,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const userRoutes = require('./features/user/userRoute')
+const carouselRoutes = require('./features/carousel/carouselRoute') 
 
 // Routes 
-app.use('/user', userRoutes)
+app.use('/user-auth', userRoutes)
+app.use('/carousel', carouselRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
