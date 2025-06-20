@@ -11,10 +11,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const userRoutes = require('./features/user/userRoute')
+
 // Routes 
-app.get('/health', (req, res) => {
-    res.send('OK')
-})
+app.use('/user', userRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
