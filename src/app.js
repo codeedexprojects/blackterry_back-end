@@ -17,7 +17,8 @@ const carouselRoutes = require('./features/carousel/carouselRoute')
 const addressRoutes = require('./features/address/addressRoute')
 const wishlistRoutes = require('./features/wishlist/wishlistRoute')
 const cartRoutes = require('./features/cart/cartRoute')
-const sizeChartRoutes = require('./features/sizeChart/sizeChartRoute')
+const sizeChartRoutes = require('./features/sizeChart/sizeChartRoute');
+const profileRoutes = require('./features/profile/profileRoute');
 
 
 // Routes 
@@ -28,6 +29,7 @@ app.use('/addresses', addressRoutes)
 app.use('/wishlist', wishlistRoutes)
 app.use('/cart', cartRoutes)
 app.use('/size-Charts', sizeChartRoutes)
+app.use('/profile', profileRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
