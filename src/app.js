@@ -17,6 +17,8 @@ const carouselRoutes = require('./features/carousel/carouselRoute')
 const addressRoutes = require('./features/address/addressRoute')
 const wishlistRoutes = require('./features/wishlist/wishlistRoute')
 
+const cartRoutes = require('./features/cart/cartRoute')
+
 
 // Routes 
 app.use('/user-auth', userRoutes)
@@ -25,6 +27,7 @@ app.use('/carousel', carouselRoutes)
 app.use('/addresses', addressRoutes)
 app.use('/wishlist', wishlistRoutes)
 
+app.use('/cart', cartRoutes)
 // Error handling middleware
 app.use(errorMiddleware);
 
