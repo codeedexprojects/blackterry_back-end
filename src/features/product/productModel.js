@@ -6,7 +6,6 @@ const productSchema = new mongoose.Schema({
   actualPrice: { type: Number, required: [true, "Actual price is required"] },
   discount: { type: Number, default: 0 },
   offerPrice: { type: Number },
-  // deliveryCharge:{ type:String , required:[ true,"Delivery charge is required"]},
   description: { type: String, required: [true, "Product description is required"] },
   images: [{ type: String, required: [true, "At least one product image is required"] }],
   manufacturerName: { type: String, required: [true, "Manufacturer name is required"] },
@@ -29,18 +28,16 @@ const productSchema = new mongoose.Schema({
 //     type: mongoose.Schema.Types.ObjectId,
 //     ref: 'SizeChart'
 //   }],
-//   features: {
-//     netWeight: { type: String, default: null },
-//     fit: { type: String, default: null },
-//     sleevesType: { type: String, default: null },
-//     Length: { type: String, default: null },
-//     occasion: { type: String, default: null },
-//     innerLining: { type: String, default: null },
-//     material: { type: String, default: null },
-//     pocket: { type: String, default: null },
-//     neck: { type: String, default: null }
-//   },
-  createdAt: { type: Date, default: Date.now }
+  features: {
+    gender: { type: String, enum: ['Men', 'Women', 'Unisex'], default: null },
+    fit: { type: String, default: null },
+    sleevesType: { type: String, default: null },
+    Length: { type: String, default: null },
+    occasion: { type: String, default: null },
+    innerLining: { type: String, default: null },
+    material: { type: String, default: null },
+    neck: { type: String, default: null }
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Products', productSchema);
