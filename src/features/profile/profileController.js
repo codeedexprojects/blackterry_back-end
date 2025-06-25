@@ -24,7 +24,7 @@ exports.getProfile = async (req, res) => {
 
 // Update user profile
 exports.updateProfile = async (req, res) => {
-    const { name, email, phone } = req.body;
+    const { name, email } = req.body;
 
     try {
         const user = await User.findById(req.user.userId); 
@@ -35,7 +35,6 @@ exports.updateProfile = async (req, res) => {
         // Update fields
         user.name = name || user.name;
         user.email = email || user.email;
-        user.phone = phone || user.phone
         
 
         await user.save();
@@ -46,7 +45,6 @@ exports.updateProfile = async (req, res) => {
                 id: user._id, 
                 name: user.name,
                 email: user.email,
-                phone: user.phone
             },
         });
     } catch (err) {
