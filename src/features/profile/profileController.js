@@ -4,8 +4,9 @@ const Address = require('..//address/addressModel');
 // Get user profile
 exports.getProfile = async (req, res) => {
     try {
-        // Find user details
-        const user = await User.findById(req.user.userId); 
+        const { userId } = req.params                
+        const user = await User.findById(userId); 
+        
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
