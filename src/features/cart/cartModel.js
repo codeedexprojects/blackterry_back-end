@@ -4,64 +4,53 @@ const cartSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, "User ID is required"]
+    required: true
   },
   items: [
     {
       productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Products',
-        required: [true, "Product ID is required"]
+        required: true
       },
       quantity: {
         type: Number,
-        required: [true, "Quantity is required"],
-        min: [1, "Quantity cannot be less than 1"]
+        required: true,
+        min: 1
       },
       price: {
         type: Number,
-        required: [true, "Price is required"]
+        required: true
       },
       color: {
         type: String,
-        required: [true, "Color is required"]
+        required: true
       },
       size: {
         type: String,
-        required: [true, "Size is required"]
-      },
-
+        required: true
+      }
     }
   ],
-  coupon: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Coupon',
-  },
   totalPrice: {
     type: Number,
     default: 0
-  },
-  discountedTotal: {
-    type: Number,
-    default: 0
-  },
-  coupenAmount: {
-    type: Number,
-    default: 0
-  },
-  discountType: {
-    type: String,
-
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true
 });
 
+// ✅ Always recalculate totalPrice before saving
+cartSchema.pre('save', function (next) {
+  if (!this.items || this.items.length === 0) {
+    this.totalPrice = 0;
+  } else {
+    this.totalPrice = this.items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+  }
+  next();
+});
 
 module.exports = mongoose.model('Cart', cartSchema);
