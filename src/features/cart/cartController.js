@@ -17,6 +17,9 @@ exports.addToCart = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    const finalPrice = product.offerPrice > 0 ? product.offerPrice : product.actualPrice;
+
+
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
@@ -37,7 +40,7 @@ exports.addToCart = async (req, res) => {
       cart.items.push({
         productId,
         quantity,
-        price: product.offerPrice, 
+        price: finalPrice, 
         color,
         size,
         features: product.features, 
