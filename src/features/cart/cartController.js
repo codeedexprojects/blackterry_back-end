@@ -85,62 +85,8 @@ exports.getCartByUserId = async (req, res) => {
 
 
 
-// Remove an item from cart
 
 
-// exports.removeFromCart = async (req, res) => {
-//   try {
-//     const { userId, productId, color, size } = req.body;
-
-//     if (!userId || !productId || !color || !size) {
-//       return res.status(400).json({ message: "Missing required fields" });
-//     }
-
-//     const cart = await Cart.findOne({ userId });
-//     if (!cart) {
-//       return res.status(404).json({ message: "Cart not found" });
-//     }
-
-//     // Remove the specific item by matching all fields
-//     const filteredItems = cart.items.filter(
-//       (item) =>
-//         item.productId.toString() !== productId ||
-//         item.color !== color ||
-//         item.size !== size
-//     );
-
-//     if (filteredItems.length === cart.items.length) {
-//       return res.status(404).json({ message: "Product not found in cart" });
-//     }
-
-//     cart.items = filteredItems;
-
-//     // If a coupon is applied, revalidate and apply it
-//     if (cart.coupon) {
-//       try {
-//         const { discountedTotal, couponAmount, discountType } = await validateAndApplyCoupon(cart, cart.coupon);
-//         cart.discountedTotal = discountedTotal;
-//         cart.coupenAmount = couponAmount;
-//         cart.discountType = discountType;
-//       } catch (error) {
-//         // If the coupon is no longer valid, remove it
-//         cart.coupon = null;
-//         cart.discountedTotal = cart.totalPrice;
-//         cart.coupenAmount = 0;
-//         cart.discountType = null;
-//       }
-//     }
-
-//     await cart.save();
-//     res.status(200).json({ message: "Product removed from cart", cart });
-//   } catch (error) {
-//     console.error("Error removing item from cart:", error.message);
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-
-// prevoius version
 exports.removeFromCart = async (req, res) => {
   try {
     const { userId, productId, color, size } = req.body;
@@ -154,11 +100,6 @@ exports.removeFromCart = async (req, res) => {
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    // Debugging: Log cart items before removal
-    console.log("Cart Items Before Removal:", JSON.stringify(cart.items, null, 2));
-    console.log("Remove Request Data:", { productId, color, size });
-
-    // Remove the specific item by matching all fields
     const filteredItems = cart.items.filter(
       (item) =>
         item.productId.toString() !== productId ||
