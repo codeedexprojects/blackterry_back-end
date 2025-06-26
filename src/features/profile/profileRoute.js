@@ -8,6 +8,6 @@ const jwtVerify=require('../../middleware/jwtMiddleware')
 router.get('/:userId', jwtVerify(['user']), profileController.getProfile);
 
 // Update user profile
-router.patch('/', jwtVerify(['user']), profileController.updateProfile);
+router.patch('/:userId', jwtVerify(['user']), profileController.updateProfile);
 
 module.exports = router;
