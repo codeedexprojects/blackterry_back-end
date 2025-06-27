@@ -17,21 +17,40 @@ exports.createCheckout = async (req, res) => {
     }
 
     let actualTotal = 0;
+    const cartItems = [];
 
-    const cartItems = cart.items.map((item) => {
-      const actualPrice = item.productId.actualPrice || 0;
+    for (const item of cart.items) {
+      const product = item.productId;
+      const actualPrice = product.actualPrice || 0;
       const offerPrice = item.price || 0;
 
-      actualTotal += actualPrice * item.quantity;
+      // ✅ Check stock
+      const selectedColor = product.colors.find(c => c.color === item.color);
+      if (!selectedColor) {
+        return res.status(400).json({ message: `Color '${item.color}' not found for product '${product.title}'` });
+      }
 
-      return {
-        productId: item.productId._id,
+      const selectedSize = selectedColor.sizes.find(s => s.size === item.size);
+      if (!selectedSize) {
+        return res.status(400).json({ message: `Size '${item.size}' not found for product '${product.title}'` });
+      }
+
+      if (selectedSize.stock < item.quantity) {
+        return res.status(400).json({ 
+          message: `Only ${selectedSize.stock} left in stock for '${product.title}' (Color: ${item.color}, Size: ${item.size})` 
+        });
+      }
+
+      // Stock is valid, proceed
+      actualTotal += actualPrice * item.quantity;
+      cartItems.push({
+        productId: product._id,
         quantity: item.quantity,
         price: offerPrice,
         color: item.color,
         size: item.size,
-      };
-    });
+      });
+    }
 
     const discountedPrice = actualTotal - cart.totalPrice;
 
@@ -40,7 +59,7 @@ exports.createCheckout = async (req, res) => {
       cartId: cart._id,
       cartItems,
       totalPrice: cart.totalPrice,
-      discountedPrice, 
+      discountedPrice,
     });
 
     await checkout.save();
@@ -57,6 +76,7 @@ exports.createCheckout = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
 
 
 
