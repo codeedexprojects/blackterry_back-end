@@ -34,11 +34,6 @@ const checkoutSchema = new mongoose.Schema({
       required: true
     },
   }],
-  addressId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Address', 
-    required: true 
-  },
   totalPrice: { 
     type: Number, 
     required: true 

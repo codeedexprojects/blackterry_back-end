@@ -1,12 +1,11 @@
 const Checkout = require('./checkoutModel');
-const Address = require('.././address/addressModel');
 const Cart = require('.././cart/cartModel');
 const Product = require('.././product/productModel'); 
 // const { checkout } = require('../../../Routes/Admin/Invoice/invoiceRoute');
 
 // Create Checkout
 exports.createCheckout = async (req, res) => {
-  const { userId, addressId } = req.body;
+  const { userId } = req.body;
 
   try {
     const cart = await Cart.findOne({ userId }).populate({
@@ -15,11 +14,6 @@ exports.createCheckout = async (req, res) => {
 
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: "Cart is empty or not found" });
-    }
-
-    const address = await Address.findById(addressId);
-    if (!address || address.userId.toString() !== userId) {
-      return res.status(404).json({ message: "Invalid shipping address" });
     }
 
     let actualTotal = 0;
@@ -45,7 +39,6 @@ exports.createCheckout = async (req, res) => {
       userId,
       cartId: cart._id,
       cartItems,
-      addressId: address._id,
       totalPrice: cart.totalPrice,
       discountedPrice, 
     });
@@ -75,7 +68,6 @@ exports.getCheckoutById = async (req, res) => {
   try {
     const checkout = await Checkout.findById(req.params.id)
       .populate('userId', 'name email') // Populate user info
-      .populate('addressId', 'name number address landmark city landmark state addressType pincode ') // Populate address details
       .populate({
         path: 'cartItems.productId', 
         model: 'Products', 
