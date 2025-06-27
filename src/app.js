@@ -20,6 +20,7 @@ const cartRoutes = require('./features/cart/cartRoute')
 const sizeChartRoutes = require('./features/sizeChart/sizeChartRoute');
 const profileRoutes = require('./features/profile/profileRoute');
 const checkoutRoutes = require('./features/checkout/checkoutRoute')
+const orderRoutes = require('./features/orders/orderRoute')
 
 
 // Routes 
@@ -32,6 +33,7 @@ app.use('/cart', cartRoutes)
 app.use('/size-Charts', sizeChartRoutes)
 app.use('/profile', profileRoutes)
 app.use('/checkout', checkoutRoutes)
+app.use('/orders', orderRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
