@@ -9,7 +9,6 @@ const checkoutSchema = new mongoose.Schema({
   cartId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Cart', 
-    required: true 
   },
   cartItems: [{
     productId: { 

@@ -116,3 +116,49 @@ exports.deletCheckout = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.buyNowCheckout = async (req, res) => {
+  const { userId, productId, quantity, color, size } = req.body;
+
+  try {
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const selectedColor = product.colors.find((c) => c.color === color);
+    const selectedSize = selectedColor?.sizes.find((s) => s.size === size);
+
+    if (!selectedColor || !selectedSize || selectedSize.stock < quantity) {
+      return res.status(400).json({ message: "Insufficient stock or invalid variant" });
+    }
+
+    const actualPrice = product.actualPrice;
+    const offerPrice = product.offerPrice ?? actualPrice;
+    const totalPrice = offerPrice * quantity;
+    const discountedAmount = (actualPrice - offerPrice) * quantity;
+
+
+    const checkout = new Checkout({
+      userId,
+      cartItems: [{
+        productId,
+        quantity,
+        price: offerPrice,
+        color,
+        size
+      }],
+      totalPrice,
+      discountedPrice: discountedAmount,
+    });
+
+    await checkout.save();
+
+    res.status(201).json({
+      message: "Buy Now checkout created",
+      checkoutId: checkout._id,
+      totalPrice,
+      discountedAmount,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
