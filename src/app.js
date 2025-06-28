@@ -22,6 +22,7 @@ const profileRoutes = require('./features/profile/profileRoute');
 const checkoutRoutes = require('./features/checkout/checkoutRoute')
 const orderRoutes = require('./features/orders/orderRoute')
 const reviewRoutes = require('./features/reveiws/reviewRoute')
+const textSliderRoutes = require('./features/textSlider/textSliderRoute')
 
 // Routes 
 app.use('/user-auth', userRoutes)
@@ -35,6 +36,7 @@ app.use('/profile', profileRoutes)
 app.use('/checkout', checkoutRoutes)
 app.use('/orders', orderRoutes)
 app.use('/reviews', reviewRoutes)
+app.use('/text-sliders', textSliderRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
