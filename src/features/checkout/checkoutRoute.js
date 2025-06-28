@@ -12,4 +12,8 @@ router
 .get(jwtVerify(['user']), checkoutController.getCheckoutById)
 .delete(jwtVerify(['user']), checkoutController.deletCheckout);
 
+router
+.route('/buy-now')
+.post(jwtVerify(['user']), checkoutController.buyNowCheckout)
+
 module.exports = router;
