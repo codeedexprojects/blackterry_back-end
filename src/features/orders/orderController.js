@@ -5,6 +5,8 @@ const Cart = require('.././cart/cartModel')
 const Checkout = require('.././checkout/checkoutModel')
 const User=require('.././user/userModel')
 const mongoose=require('mongoose')
+const { createInvoiceForOrder } = require('./orderModel');
+
 // const razorpay = require('../../../config/RazorpayInstance');
 // const crypto = require("crypto");
 // const { sendEmail } = require('../../../config/mailGun');  
@@ -235,6 +237,7 @@ exports.placeOrder = async (req, res) => {
     });
 
     await order.save();
+    await createInvoiceForOrder(order._id);
     await Cart.deleteOne({ userId });
     await Checkout.deleteOne({ _id: checkoutId });
 
@@ -299,3 +302,123 @@ exports.getOrderById = async (req, res) => {
 };
 
 
+
+// exports.updateOrderStatus = async (req, res) => {
+//   try {
+//     const { orderId } = req.params;
+//     const { status,  } = req.body;
+
+//     // Validate status
+//     const validStatuses = ['Pending', 'Processing', 'In-Transist', 'Delivered', 'Cancelled'];
+//     if (status && !validStatuses.includes(status)) {
+//       return res.status(400).json({ message: "Invalid status value" });
+//     }
+   
+//     const validOrder=await Order.findById(orderId)
+//     // console.log(validOrder.TrackId)
+//     // if (status === "In-Transist" && !validOrder.TrackId) {
+//     //   return res.status(400).json({ message: "This order doesn't have a tracking ID to update to Dispatched" });
+//     // }
+
+//     // Update the order
+//     const order = await Order.findByIdAndUpdate(
+//       orderId,
+//       { status },
+//       { new: true }
+//     )
+//       .populate('userId', 'name email')
+//       .populate('products.productId', 'title');
+
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found" });
+//     }
+
+//     // Send email based on order status
+//     if ((order.status === "In-Transist" && order.TrackId) || order.status === "Delivered") {
+//       await sendOrderStatusEmail(order);
+//     }
+
+//     res.status(200).json({ message: "Order status updated successfully", order });
+//   } catch (err) {
+//     res.status(500).json({ message: "Error updating order status", error: err.message });
+//   }
+// };
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { reason } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    if (order.status === 'Cancelled') {
+      return res.status(400).json({ message: 'Order already cancelled' });
+    }
+
+    if (order.status === 'Delivered' || order.status === 'Returned') {
+      return res.status(403).json({ message: `Cannot cancel an order that is already ${order.status}` });
+    }
+
+    for (const item of order.products) {
+      const product = await Product.findById(item.productId);
+      if (!product) continue;
+
+      const colorVariant = product.colors.find(c => c.color === item.color);
+      if (!colorVariant) continue;
+
+      const sizeVariant = colorVariant.sizes.find(s => s.size === item.size);
+      if (!sizeVariant) continue;
+
+      sizeVariant.stock += item.quantity;
+      product.totalStock += item.quantity;
+      product.orderCount = Math.max(0, product.orderCount - item.quantity);
+
+      product.markModified('colors');
+      await product.save();
+    }
+
+    order.status = 'Cancelled';
+    order.cancelReason = reason || null;
+    order.cancelledAt = new Date();
+    await order.save();
+
+    res.status(200).json({ message: 'Order cancelled and stock restored', order });
+  } catch (err) {
+    console.error('Cancel Order Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// User initiates a return request
+exports.requestReturn = async (req, res) => {
+  const { orderId } = req.params;
+  const { reason } = req.body;
+
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    if (order.status !== 'Delivered') {
+      return res.status(400).json({ message: "Return request allowed only for delivered orders" });
+    }
+
+    const oneWeekAfterDelivery = new Date(order.deliveryDate);
+    oneWeekAfterDelivery.setDate(oneWeekAfterDelivery.getDate() + 7);
+
+    if (new Date() > oneWeekAfterDelivery) {
+      return res.status(400).json({ message: "Return period expired" });
+    }
+
+    order.status = "ReturnRequested";
+    order.returnReason = reason;
+    order.returnRequestedAt = new Date();
+
+    await order.save();
+
+    res.status(200).json({ message: "Return request submitted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};

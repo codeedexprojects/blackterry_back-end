@@ -16,6 +16,12 @@ router.get('/user/:userId', jwtVerify(['user']), orderController.getUserOrders);
 // Get order details by ID
 router.get('/:orderId', jwtVerify(['user','admin']), orderController.getOrderById);
 
+// router.post('/invoice/:orderId', orderController.updateOrderStatus)
+
+router.post('/cancel/:orderId', jwtVerify(['user']), orderController.cancelOrder)
+
+router.post('/return/:orderId', jwtVerify(['user']), orderController.requestReturn)
+
 
 
 
