@@ -351,15 +351,14 @@ exports.cancelOrder = async (req, res) => {
 
     const order = await Order.findById(orderId);
     if (!order) return res.status(404).json({ message: 'Order not found' });
+    
 
-    if (order.status === 'Cancelled') {
-      return res.status(400).json({ message: 'Order already cancelled' });
+    // Allow cancellation only if status is Pending or Processing
+    if (!['Pending', 'Processing'].includes(order.status)) {
+      return res.status(403).json({ message: `Cannot cancel an order with status "${order.status}"` });
     }
 
-    if (order.status === 'Delivered' || order.status === 'Returned') {
-      return res.status(403).json({ message: `Cannot cancel an order that is already ${order.status}` });
-    }
-
+    // Restore stock for each product in the order
     for (const item of order.products) {
       const product = await Product.findById(item.productId);
       if (!product) continue;
@@ -378,12 +377,13 @@ exports.cancelOrder = async (req, res) => {
       await product.save();
     }
 
+    // Update order status and cancellation details
     order.status = 'Cancelled';
     order.cancelReason = reason || null;
     order.cancelledAt = new Date();
     await order.save();
 
-    res.status(200).json({ message: 'Order cancelled and stock restored', order });
+    res.status(200).json({ message: 'Order cancelled successfully and stock updated', order });
   } catch (err) {
     console.error('Cancel Order Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
