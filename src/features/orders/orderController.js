@@ -6,6 +6,8 @@ const Checkout = require('.././checkout/checkoutModel')
 const User=require('.././user/userModel')
 const mongoose=require('mongoose')
 const { createInvoiceForOrder } = require('./orderModel');
+const sendEmail = require('../../../config/mailService'); // Adjust path
+
 
 // const razorpay = require('../../../config/RazorpayInstance');
 // const crypto = require("crypto");
@@ -302,48 +304,6 @@ exports.getOrderById = async (req, res) => {
 };
 
 
-
-// exports.updateOrderStatus = async (req, res) => {
-//   try {
-//     const { orderId } = req.params;
-//     const { status,  } = req.body;
-
-//     // Validate status
-//     const validStatuses = ['Pending', 'Processing', 'In-Transist', 'Delivered', 'Cancelled'];
-//     if (status && !validStatuses.includes(status)) {
-//       return res.status(400).json({ message: "Invalid status value" });
-//     }
-   
-//     const validOrder=await Order.findById(orderId)
-//     // console.log(validOrder.TrackId)
-//     // if (status === "In-Transist" && !validOrder.TrackId) {
-//     //   return res.status(400).json({ message: "This order doesn't have a tracking ID to update to Dispatched" });
-//     // }
-
-//     // Update the order
-//     const order = await Order.findByIdAndUpdate(
-//       orderId,
-//       { status },
-//       { new: true }
-//     )
-//       .populate('userId', 'name email')
-//       .populate('products.productId', 'title');
-
-//     if (!order) {
-//       return res.status(404).json({ message: "Order not found" });
-//     }
-
-//     // Send email based on order status
-//     if ((order.status === "In-Transist" && order.TrackId) || order.status === "Delivered") {
-//       await sendOrderStatusEmail(order);
-//     }
-
-//     res.status(200).json({ message: "Order status updated successfully", order });
-//   } catch (err) {
-//     res.status(500).json({ message: "Error updating order status", error: err.message });
-//   }
-// };
-
 exports.cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -422,3 +382,63 @@ exports.requestReturn = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+
+exports.getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find().sort({createdAt:-1})
+        res.status(200).json({message: "Orders fetched Successfully", orders})
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+
+
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = ['Pending', 'Processing', 'In-Transist', 'Delivered', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    )
+      .populate('userId', 'name email')
+      .populate('products.productId', 'title');
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Prepare email content only when status is Delivered
+    if (status === "Delivered") {
+      const productList = order.products
+        .map(p => `<li>${p.productId.title} x ${p.quantity}</li>`)
+        .join('');
+
+      const html = `
+        <h2>Hello ${order.userId.name},</h2>
+        <p>Your order <strong>${order.orderId}</strong> has been <strong>delivered</strong>.</p>
+        <h4>Order Summary:</h4>
+        <ul>${productList}</ul>
+        <p>Thank you for shopping with us at <strong>Black Terry</strong>.</p>
+      `;
+
+      await sendEmail(order.userId.email, `Your Order ${order.orderId} Has Been Delivered`, html);
+    }
+
+    res.status(200).json({ message: "Order status updated successfully", order });
+
+  } catch (err) {
+    res.status(500).json({ message: "Error updating order status", error: err.message });
+  }
+};
+
