@@ -26,6 +26,7 @@ const textSliderRoutes = require('./features/textSlider/textSliderRoute');
 const invoiceRoutes = require('./features/invoice/invoiceRoute');
 
 const adminAuthRoutes = require('./features/adminAuth/adminRoute')
+const userManagementRoutes = require('./features/userManagement/userManagementRoute')
 
 // Routes 
 app.use('/user-auth', userRoutes)
@@ -43,6 +44,7 @@ app.use('/text-sliders', textSliderRoutes)
 app.use('/invoice', invoiceRoutes)
 
 app.use('/admin-auth', adminAuthRoutes)
+app.use('/user-management', userManagementRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
