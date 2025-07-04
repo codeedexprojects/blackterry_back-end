@@ -8,9 +8,7 @@ const mongoose=require('mongoose')
 const { createInvoiceForOrder } = require('./orderModel');
 const sendEmail = require('../../../config/mailService'); // Adjust path
 const razorpay = require('../../../config/razorpayInstance');
-
-// const crypto = require("crypto");
-// const { sendEmail } = require('../../../config/mailGun');  
+const crypto = require("crypto");
 
 
 // exports.initiateOrder = async (req, res) => {
@@ -614,7 +612,7 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-// Delete Order by ID
+
 exports.deleteOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -636,3 +634,4 @@ exports.deleteOrder = async (req, res) => {
     res.status(500).json({ message: "Error deleting order", error: err.message });
   }
 };
+

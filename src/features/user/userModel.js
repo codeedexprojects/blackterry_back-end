@@ -21,18 +21,19 @@ const userSchema = new mongoose.Schema({
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             "Please enter a valid email address"
         ],
-        default:null,
-        require:true
+        default: null,
+        required: true
     },
     status: {
-        type: Boolean,
-        default: true
+        type: String,
+        enum: ['active', 'suspended'],
+        default: 'active'
     },
     role: {
         type: String,
         default: 'user',
     },
-    addresses: [{ type: mongoose.Schema.Types.ObjectId, ref:'Address' }]
+    addresses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Address' }]
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

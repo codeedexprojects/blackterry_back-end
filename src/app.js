@@ -25,6 +25,10 @@ const reviewRoutes = require('./features/reveiws/reviewRoute')
 const textSliderRoutes = require('./features/textSlider/textSliderRoute');
 const invoiceRoutes = require('./features/invoice/invoiceRoute');
 
+const adminAuthRoutes = require('./features/adminAuth/adminRoute')
+const userManagementRoutes = require('./features/userManagement/userManagementRoute')
+const dashboardRoutes = require('./features/dashboard/dashboardRoute')
+
 // Routes 
 app.use('/user-auth', userRoutes)
 app.use('/products', productRoutes)
@@ -39,6 +43,10 @@ app.use('/orders', orderRoutes)
 app.use('/reviews', reviewRoutes)
 app.use('/text-sliders', textSliderRoutes)
 app.use('/invoice', invoiceRoutes)
+
+app.use('/admin-auth', adminAuthRoutes)
+app.use('/user-management', userManagementRoutes)
+app.use('/dashboard', dashboardRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
