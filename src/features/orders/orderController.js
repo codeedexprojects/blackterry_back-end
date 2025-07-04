@@ -383,15 +383,24 @@ exports.requestReturn = async (req, res) => {
   }
 };
 
-
 exports.getAllOrders = async (req, res) => {
-    try {
-        const orders = await Order.find().sort({createdAt:-1})
-        res.status(200).json({message: "Orders fetched Successfully", orders})
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+  try {
+    const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .populate('userId', 'name email phone') // Populate user info
+      .populate('products.productId', 'title') // Populate product info
+      .lean();
+
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      count: orders.length,
+      orders
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+  }
+};
+
 
 
 
