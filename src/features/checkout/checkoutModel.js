@@ -9,7 +9,6 @@ const checkoutSchema = new mongoose.Schema({
   cartId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Cart', 
-    required: true 
   },
   cartItems: [{
     productId: { 
@@ -34,11 +33,6 @@ const checkoutSchema = new mongoose.Schema({
       required: true
     },
   }],
-  addressId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Address', 
-    required: true 
-  },
   totalPrice: { 
     type: Number, 
     required: true 
