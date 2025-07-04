@@ -5,7 +5,7 @@ const jwtVerify=require('../../middleware/jwtMiddleware')
 
 
 // intiate an order
-// router.post('/create', jwtVerify(['user']), orderController.initiateOrder);
+router.post('/create', jwtVerify(['user']), orderController.initiateOrder);
 
 // place an order
 router.post('/confirm', jwtVerify(['user']), orderController.placeOrder)
@@ -25,6 +25,7 @@ router.get('/', jwtVerify(['admin']), orderController.getAllOrders)
 
 router.patch('/update/:orderId', jwtVerify(['admin']), orderController.updateOrderStatus)
 
+router.delete('/delete/:orderId', jwtVerify(['admin']), orderController.deleteOrder)
 
 
 
