@@ -27,6 +27,7 @@ const invoiceRoutes = require('./features/invoice/invoiceRoute');
 
 const adminAuthRoutes = require('./features/adminAuth/adminRoute')
 const userManagementRoutes = require('./features/userManagement/userManagementRoute')
+const dashboardRoutes = require('./features/dashboard/dashboardRoute')
 
 // Routes 
 app.use('/user-auth', userRoutes)
@@ -45,6 +46,7 @@ app.use('/invoice', invoiceRoutes)
 
 app.use('/admin-auth', adminAuthRoutes)
 app.use('/user-management', userManagementRoutes)
+app.use('/dashboard', dashboardRoutes)
 
 // Error handling middleware
 app.use(errorMiddleware);
