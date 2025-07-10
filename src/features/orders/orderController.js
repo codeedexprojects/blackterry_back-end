@@ -430,6 +430,7 @@ exports.getUserOrders = async (req, res) => {
     const { userId } = req.params;
 
     const orders = await Order.find({ userId })
+      .sort({createdAt:-1})
       .populate({
         path: 'products.productId',
         model: 'Products',
