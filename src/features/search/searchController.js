@@ -2,7 +2,7 @@ const Products = require("../product/productModel");
 const Wishlist = require("../wishlist/wishlistModel");
 
 exports.MainSearch = async (req, res) => {
-  const { query, page = 1, limit = 10, userId } = req.query;
+  const { query, userId } = req.query;
 
   try {
     if (!query || query.trim() === "") {
@@ -26,8 +26,6 @@ exports.MainSearch = async (req, res) => {
         { "manufacturerBrand": searchRegex },
       ],
     })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
 
     // Check if user has a wishlist
     if (userId) {
@@ -47,11 +45,9 @@ exports.MainSearch = async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      message: "Search results fetched successfully",
-      products,
-      totalResults: products.length,
-    });
+    res.status(200).json(
+      products
+    );
 
   } catch (err) {
     console.error("Error fetching search results:", err.message);
