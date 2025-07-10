@@ -175,8 +175,8 @@ exports.initiateOrder = async (req, res) => {
       totalAmount += itemPrice * cartItem.quantity;
     }
 
-    const amountInPaise = checkout.totalPrice * 100;
-
+    const amountInPaise = Math.round(checkout.totalPrice * 100);
+    
     // Create Razorpay Order
     const razorpayOrder = await razorpay.orders.create({
       amount: amountInPaise,
