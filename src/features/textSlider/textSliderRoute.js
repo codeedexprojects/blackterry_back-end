@@ -8,7 +8,7 @@ router
 .route('/')
 .get(textSliderController.getTextSliders)
 .post(
-//   jwtVerify(['admin']),
+  jwtVerify(['admin']),
   textSliderController.createTextSlider
 );
 
@@ -17,11 +17,11 @@ router
 router
 .route('/:id')
 .patch(
-//   jwtVerify(['admin']),
+  jwtVerify(['admin']),
   textSliderController.updateTextSlider
 )
 .delete(
-    //  jwtVerify(['admin']),
+     jwtVerify(['admin']),
       textSliderController.deleteTextSlider);
 
 

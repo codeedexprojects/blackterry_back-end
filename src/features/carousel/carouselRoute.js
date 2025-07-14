@@ -7,7 +7,7 @@ const jwtVerify = require('../../middleware/jwtMiddleware');
 // Create new carousel
 router.post(
   '/create',
-//   jwtVerify(['admin']),
+  jwtVerify(['admin']),
   multerMiddleware.upload.single('image'),
   carouselController.createCarousel
 );
@@ -18,14 +18,14 @@ router.get('/', carouselController.getAllCarousels);
 // Update carousel
 router.patch(
   '/:id',
-//   jwtVerify(['admin']),
+  jwtVerify(['admin']),
   multerMiddleware.upload.single('image'),
   carouselController.updateCarousel
 );
 
 // Delete carousel
 router.delete('/:id',
-    //  jwtVerify(['admin']),
+     jwtVerify(['admin']),
       carouselController.deleteCarousel);
 
 

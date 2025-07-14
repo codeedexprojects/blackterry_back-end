@@ -5,7 +5,7 @@ const jwtVerify = require('../../middleware/jwtMiddleware')
 
 router
 .route('/')
-.get( /*jwtVerify(['admin']),*/invoiceController.getInvoices);
+.get( jwtVerify(['admin']),invoiceController.getInvoices);
 
 
 router
@@ -18,8 +18,8 @@ router
 // update
 router
 .route('/:id')
-.patch(/*jwtVerify(['admin']),*/ invoiceController.updateInvoice)
-.delete(/*jwtVerify(['admin']),*/invoiceController.deleteInvoice);
+.patch(jwtVerify(['admin']), invoiceController.updateInvoice)
+.delete(jwtVerify(['admin']),invoiceController.deleteInvoice);
 
 
 
