@@ -1,0 +1,41 @@
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, "Name is required"]
+    },
+    phone: {
+        type: String,
+        unique: true,
+        sparse: true,
+        match: [
+            /^\+?[1-9]\d{1,14}$/,
+            "Please enter a valid phone number"
+        ],
+    },
+    email: {
+        type: String,
+        unique: true,
+        match: [
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            "Please enter a valid email address"
+        ],
+        default: null,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['active', 'suspended'],
+        default: 'active'
+    },
+    role: {
+        type: String,
+        default: 'user',
+    },
+    addresses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Address' }]
+}, { timestamps: true });
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
