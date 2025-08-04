@@ -14,7 +14,6 @@ const routePath = path.basename(req.baseUrl || req.originalUrl || "default");
 
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
-      console.log('e');
       
     }
     cb(null, folderPath);
