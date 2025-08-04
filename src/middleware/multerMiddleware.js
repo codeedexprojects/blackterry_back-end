@@ -10,12 +10,12 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
 const routePath = path.basename(req.baseUrl || req.originalUrl || "default");
     const folderName = sanitizeFolderName(routePath);
-    console.log(folderName);
-    
     const folderPath = path.join(__dirname, "../uploads", folderName);
 
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
+      console.log('e');
+      
     }
     cb(null, folderPath);
   },
@@ -23,6 +23,7 @@ const routePath = path.basename(req.baseUrl || req.originalUrl || "default");
     const uniqueSuffix = `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`;
     cb(null, `file-${uniqueSuffix}`);
   },
+  
 });
 
 const allowedMimeTypes = [
