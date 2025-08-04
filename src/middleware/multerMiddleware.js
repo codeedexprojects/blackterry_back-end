@@ -2,27 +2,20 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const sanitizeFolderName = (folderName) => {
-  return folderName.replace(/\//g, "_").replace(/[^a-zA-Z0-9_-]/g, "");
-};
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-const routePath = path.basename(req.baseUrl || req.originalUrl || "default");
-    const folderName = sanitizeFolderName(routePath);
-    const folderPath = path.join(__dirname, "../uploads", folderName);
+    const folderPath = path.join(__dirname, "../uploads");
 
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
-      
     }
+
     cb(null, folderPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`;
     cb(null, `file-${uniqueSuffix}`);
   },
-  
 });
 
 const allowedMimeTypes = [
@@ -50,6 +43,4 @@ const upload = multer({
   },
 });
 
-
-module.exports = {upload};
-
+module.exports = { upload };
