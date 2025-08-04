@@ -8,9 +8,12 @@ const sanitizeFolderName = (folderName) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const routePath = req.baseUrl || req.originalUrl || 'default';
+const routePath = path.basename(req.baseUrl || req.originalUrl || "default");
     const folderName = sanitizeFolderName(routePath);
+    console.log(folderName);
+    
     const folderPath = path.join(__dirname, "../uploads", folderName);
+
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true });
     }
